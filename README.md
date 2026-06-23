@@ -4,13 +4,13 @@ An interactive dashboard for exploring Singapore's Graduate Employment Survey (G
 
 **[Live App →](https://gesdashboard.streamlit.app/)** 
 
----
+
 
 ## What is this?
 
 This dashboard pulls together that Graduate Employemnet Data from 2013 to 2025 across NTU, NUS, SMU, SIT, SUTD, and SUSS, and lets you explore it visually in one place.
 
----
+
 
 ## What can you do with it?
 
@@ -22,7 +22,7 @@ This dashboard pulls together that Graduate Employemnet Data from 2013 to 2025 a
 
 **PDF Export**
 
----
+
 
 ## Metrics covered
 
@@ -34,7 +34,7 @@ This dashboard pulls together that Graduate Employemnet Data from 2013 to 2025 a
 | Gross Monthly Mean/Median | Total salary including allowances |
 | Gross Monthly 25th/75th Percentile | Salary range spread |
 
----
+
 
 ## Universities
 
