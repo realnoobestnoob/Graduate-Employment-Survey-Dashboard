@@ -36,164 +36,179 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# Background image (base64-embedded so no separate static-file serving
-# config is needed)
-# ─────────────────────────────────────────────
-import base64
-from pathlib import Path
-
-
-@st.cache_data(show_spinner=False)
-def _load_bg_b64() -> str:
-    bg_path = Path(__file__).parent / "graduation_bg.png"
-    if not bg_path.exists():
-        return ""
-    return base64.b64encode(bg_path.read_bytes()).decode()
-
-
-_BG_B64 = _load_bg_b64()
-
-# ─────────────────────────────────────────────
 # Styling
 # ─────────────────────────────────────────────
-st.markdown(f"""
+st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-html, body, [class*="css"] {{
+html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
-}}
+}
 
-/* Background image with dark overlay for readability */
-.stApp {{
-    background:
-        linear-gradient(rgba(15,23,42,0.72), rgba(15,23,42,0.78)),
-        url("data:image/png;base64,{_BG_B64}");
-    background-size: cover;
-    background-position: center top;
-    background-attachment: fixed;
-}}
+/* Clean light background */
+.stApp {
+    background: #F5F7FA;
+}
 
-/* Page title needs to read on the dark photo bg; bordered containers below
-   sit on a white background so their own text stays the default dark color. */
-h1, h2, h3 {{
-    color: #F9FAFB;
-}}
-.st-key-section_overall_trend h1, .st-key-section_overall_trend h2, .st-key-section_overall_trend h3,
-.st-key-section_heatmap h1, .st-key-section_heatmap h2, .st-key-section_heatmap h3,
-.st-key-section_compare_degrees h1, .st-key-section_compare_degrees h2, .st-key-section_compare_degrees h3 {{
+h1, h2, h3 {
     color: #111827;
-}}
+}
 
-/* Tabs — segments overall trend / heatmap / compare into clearly separated
-   views over the background photo. Tab panel content gets a white backing
-   so text and charts stay readable against the photo wallpaper. */
-.stTabs [data-baseweb="tab-list"] {{
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
     gap: 4px;
-}}
-.stTabs [data-baseweb="tab"] {{
-    background: rgba(255,255,255,0.85);
-    border-radius: 10px 10px 0 0;
-    color: #111827;
+    background: transparent;
+    border-bottom: 2px solid #E5E7EB;
+    padding-bottom: 0;
+}
+.stTabs [data-baseweb="tab"] {
+    background: transparent;
+    border-radius: 8px 8px 0 0;
+    color: #6B7280;
     font-weight: 600;
-    padding: 10px 20px;
-}}
-.stTabs [aria-selected="true"] {{
-    background: rgba(255,255,255,0.97) !important;
-}}
-.stTabs [data-baseweb="tab-panel"] {{
-    background: rgba(255,255,255,0.97);
+    padding: 10px 22px;
+    border: none;
+    transition: color 0.15s;
+}
+.stTabs [data-baseweb="tab"]:hover {
+    color: #2563EB;
+    background: #EFF6FF;
+}
+.stTabs [aria-selected="true"] {
+    background: #FFFFFF !important;
+    color: #2563EB !important;
+    border-top: 2px solid #2563EB;
+    margin-bottom: -2px;
+}
+.stTabs [data-baseweb="tab-panel"] {
+    background: #FFFFFF;
     border-radius: 0 12px 12px 12px;
-    padding: 20px 24px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-}}
+    padding: 24px 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+}
 .stTabs [data-baseweb="tab-panel"] h1,
 .stTabs [data-baseweb="tab-panel"] h2,
 .stTabs [data-baseweb="tab-panel"] h3,
 .stTabs [data-baseweb="tab-panel"] p,
-.stTabs [data-baseweb="tab-panel"] label {{
+.stTabs [data-baseweb="tab-panel"] label {
     color: #111827;
-}}
+}
 
 /* Metric cards */
-.metric-card {{
-    background: white;
+.metric-card {
+    background: #FFFFFF;
     border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    padding: 16px 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    min-height: 92px;
-}}
-.metric-card .label {{
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.04);
+    min-height: 96px;
+    transition: box-shadow 0.15s;
+}
+.metric-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+.metric-card .label {
     font-size: 11px;
     font-weight: 600;
-    color: #6B7280;
+    color: #9CA3AF;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-}}
-.metric-card .value {{
-    font-size: 26px;
+    letter-spacing: 0.06em;
+}
+.metric-card .value {
+    font-size: 28px;
     font-weight: 700;
     color: #111827;
-    margin: 4px 0 0;
-}}
-.metric-card .delta {{
+    margin: 6px 0 0;
+    letter-spacing: -0.5px;
+}
+.metric-card .delta {
     font-size: 12px;
-    margin-top: 2px;
-}}
-.delta-up {{ color: #047857; }}
-.delta-flat {{ color: #B45309; }}
-.delta-down {{ color: #B91C1C; }}
+    font-weight: 500;
+    margin-top: 4px;
+}
+.delta-up   { color: #059669; }
+.delta-flat { color: #D97706; }
+.delta-down { color: #DC2626; }
 
-.metric-card.card-up {{ border-left: 4px solid #10B981; }}
-.metric-card.card-flat {{ border-left: 4px solid #F59E0B; }}
-.metric-card.card-down {{ border-left: 4px solid #EF4444; }}
+.metric-card.card-up   { border-left: 4px solid #10B981; }
+.metric-card.card-flat { border-left: 4px solid #F59E0B; }
+.metric-card.card-down { border-left: 4px solid #EF4444; }
 
 /* Section headers */
-.section-header {{
-    font-size: 18px;
+.section-header {
+    font-size: 17px;
     font-weight: 700;
     color: #111827;
-    margin: 0 0 12px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #F3F4F6;
-}}
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #EEF0F4;
+}
 
-/* Dashboard title banner — sits directly on the photo bg */
-.dash-title {{
-    font-size: 30px;
+/* Dashboard title banner */
+.dash-title {
+    font-size: 28px;
     font-weight: 700;
-    color: #FFFFFF;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    margin: 8px 0 4px;
-}}
-.dash-subtitle {{
+    color: #111827;
+    margin: 12px 0 4px;
+    letter-spacing: -0.5px;
+}
+.dash-subtitle {
     font-size: 14px;
-    color: #E2E8F0;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-    margin-bottom: 8px;
-}}
+    color: #6B7280;
+    margin-bottom: 16px;
+    font-weight: 400;
+}
 
 /* Sidebar */
-section[data-testid="stSidebar"] {{
-    background: #F9FAFB;
+section[data-testid="stSidebar"] {
+    background: #FFFFFF;
     border-right: 1px solid #E5E7EB;
-}}
-section[data-testid="stSidebar"] * {{
+}
+section[data-testid="stSidebar"] * {
     color: #111827 !important;
-}}
+}
+section[data-testid="stSidebar"] .stMarkdown h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827 !important;
+}
 
-/* Upload area */
-.upload-hint {{
-    font-size: 13px;
+/* Upload hint */
+.upload-hint {
+    font-size: 12px;
     color: #9CA3AF;
     margin-top: 4px;
-}}
+}
 
-div[data-testid="stPlotlyChart"] {{
+/* Chart containers */
+div[data-testid="stPlotlyChart"] {
     border-radius: 10px;
     overflow: hidden;
-}}
+}
+
+/* Dividers */
+hr {
+    border-color: #EEF0F4 !important;
+}
+
+/* Buttons */
+div[data-testid="stButton"] > button {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+div[data-testid="stButton"] > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* Expander */
+div[data-testid="stExpander"] {
+    border: 1px solid #E5E7EB !important;
+    border-radius: 10px !important;
+    background: #FFFFFF;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -741,4 +756,3 @@ with tab_compare:
                 file_name="ges_comparison.csv",
                 mime="text/csv",
             )
-
