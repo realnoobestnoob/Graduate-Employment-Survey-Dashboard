@@ -389,17 +389,13 @@ with tab_overall:
             st.warning("No data found for this category.")
             st.stop()
     else:
-        dash_degrees = col_f1.multiselect(
-            "Degree(s) — select multiple to compare",
+        dash_degree = col_f1.selectbox(
+            "Degree",
             all_degrees,
-            default=all_degrees[:1],
             key="dash_degrees",
-            placeholder="Start typing a degree name…",
         )
-        if not dash_degrees:
-            st.info("Select one or more degrees to view the dashboard.")
-            st.stop()
-        view_df = df[df["degree"].str.lower().isin([d.lower() for d in dash_degrees])]
+        dash_degrees = [dash_degree]
+        view_df = df[df["degree"].str.lower() == dash_degree.lower()]
         if view_df.empty:
             st.warning("No data found.")
             st.stop()
@@ -470,35 +466,7 @@ with tab_overall:
     with chart_col:
         st.markdown('<div class="section-header">Trend Over Time</div>', unsafe_allow_html=True)
         if dash_mode == "By Degree":
-            # Aggregate all metrics across the selected degrees into one chart —
-            # one line per metric, averaged over every selected degree × university.
-            agg_by_year = view_df.groupby("year")[all_metrics].mean()
-
-            fig = go.Figure()
-            for m in all_metrics:
-                series = agg_by_year[m].dropna()
-                if series.empty:
-                    continue
-                is_r = m in RATE_METRICS
-                y_vals = series * 100 if is_r else series
-                suffix = "%" if is_r else ""
-                fig.add_trace(go.Scatter(
-                    x=series.index,
-                    y=y_vals,
-                    mode="lines+markers",
-                    name=METRIC_LABELS[m],
-                    hovertemplate=f"%{{x}}: %{{y:.1f}}{suffix}<extra>{METRIC_LABELS[m]}</extra>",
-                ))
-
-            fig.update_layout(
-                margin=dict(l=0, r=0, t=24, b=0),
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-                hovermode="x unified",
-                plot_bgcolor="white",
-                paper_bgcolor="white",
-                yaxis=dict(gridcolor="#F3F4F6"),
-                xaxis=dict(gridcolor="#F3F4F6", tickmode="linear", dtick=1),
-            )
+            fig = line_chart(view_df, dash_degrees, dash_metric)
         else:
             fig = dashboard_overview(view_df, dash_metric)
         st.plotly_chart(fig, use_container_width=True, key="dash_trend_chart")
