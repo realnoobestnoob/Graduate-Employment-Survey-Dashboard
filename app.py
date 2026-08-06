@@ -467,45 +467,10 @@ with tab_overall:
         st.markdown('<div class="section-header">Trend Over Time</div>', unsafe_allow_html=True)
         if dash_mode == "By Degree":
             # Aggregate the selected metric across all universities for the
-            # chosen degree — one mean value per year, single line.
-            agg_deg = view_df.groupby("year")[dash_metric].mean().dropna()
-            is_r = dash_metric in RATE_METRICS
-            y_vals = agg_deg * 100 if is_r else agg_deg
-            suffix = "%" if is_r else ""
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=agg_deg.index,
-                y=y_vals,
-                mode="lines+markers",
-                name=METRIC_LABELS[dash_metric],
-                line=dict(width=2.5, color="#2563EB"),
-                marker=dict(size=6, color="#2563EB"),
-                hovertemplate=f"%{{x}}: %{{y:.1f}}{suffix}<extra></extra>",
-            ))
-            fig.update_layout(
-                template="plotly_white",
-                font=dict(family="Inter, sans-serif", color="#374151"),
-                margin=dict(l=0, r=0, t=8, b=0),
-                hovermode="x unified",
-                showlegend=False,
-                xaxis=dict(
-                    title=None,
-                    gridcolor="#F3F4F6",
-                    tickmode="linear",
-                    dtick=1,
-                    tickfont=dict(color="#6B7280", size=12),
-                ),
-                yaxis=dict(
-                    title=dict(
-                        text=METRIC_LABELS[dash_metric],
-                        font=dict(color="#374151", size=12),
-                    ),
-                    gridcolor="#F3F4F6",
-                    tickfont=dict(color="#6B7280", size=12),
-                ),
-                plot_bgcolor="#FFFFFF",
-                paper_bgcolor="#FFFFFF",
-            )
+            # Aggregate across universities by passing the degree-filtered
+            # view_df directly to dashboard_overview — same function, same
+            # aesthetics as all other view modes.
+            fig = dashboard_overview(view_df, dash_metric)
         else:
             fig = dashboard_overview(view_df, dash_metric)
         st.plotly_chart(fig, use_container_width=True, key="dash_trend_chart")
