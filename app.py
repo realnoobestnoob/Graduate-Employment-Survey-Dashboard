@@ -389,17 +389,13 @@ with tab_overall:
             st.warning("No data found for this category.")
             st.stop()
     else:
-        dash_degrees = col_f1.multiselect(
-            "Degree(s) — select multiple to compare",
+        dash_degree = col_f1.selectbox(
+            "Degree",
             all_degrees,
-            default=all_degrees[:1],
             key="dash_degrees",
-            placeholder="Start typing a degree name…",
         )
-        if not dash_degrees:
-            st.info("Select one or more degrees to view the dashboard.")
-            st.stop()
-        view_df = df[df["degree"].str.lower().isin([d.lower() for d in dash_degrees])]
+        dash_degrees = [dash_degree]
+        view_df = df[df["degree"].str.lower() == dash_degree.lower()]
         if view_df.empty:
             st.warning("No data found.")
             st.stop()
@@ -471,9 +467,9 @@ with tab_overall:
         st.markdown('<div class="section-header">Trend Over Time</div>', unsafe_allow_html=True)
         if dash_mode == "By Degree":
             # Aggregate the selected metric across all universities for the
-            # chosen degree — one mean value per year, rendered as a single line.
-            is_r = dash_metric in RATE_METRICS
+            # chosen degree — one mean value per year, single line.
             agg_deg = view_df.groupby("year")[dash_metric].mean().dropna()
+            is_r = dash_metric in RATE_METRICS
             y_vals = agg_deg * 100 if is_r else agg_deg
             suffix = "%" if is_r else ""
             fig = go.Figure()
@@ -482,17 +478,31 @@ with tab_overall:
                 y=y_vals,
                 mode="lines+markers",
                 name=METRIC_LABELS[dash_metric],
-                line=dict(width=2.5),
-                hovertemplate=f"%{{x}}: %{{y:.1f}}{suffix}<extra>{METRIC_LABELS[dash_metric]}</extra>",
+                line=dict(width=2.5, color="#2563EB"),
+                marker=dict(size=6, color="#2563EB"),
+                hovertemplate=f"%{{x}}: %{{y:.1f}}{suffix}<extra></extra>",
             ))
             fig.update_layout(
-                margin=dict(l=0, r=0, t=24, b=0),
+                template="plotly_white",
+                font=dict(family="Inter, sans-serif", color="#374151"),
+                margin=dict(l=0, r=0, t=8, b=0),
                 hovermode="x unified",
-                plot_bgcolor="white",
-                paper_bgcolor="white",
-                yaxis=dict(gridcolor="#F3F4F6", title=METRIC_LABELS[dash_metric]),
-                xaxis=dict(gridcolor="#F3F4F6", tickmode="linear", dtick=1),
                 showlegend=False,
+                xaxis=dict(
+                    title=None,
+                    gridcolor="#F3F4F6",
+                    tickmode="linear",
+                    dtick=1,
+                    tickfont=dict(color="#6B7280", size=12),
+                ),
+                yaxis=dict(
+                    title=METRIC_LABELS[dash_metric],
+                    gridcolor="#F3F4F6",
+                    tickfont=dict(color="#6B7280", size=12),
+                    titlefont=dict(color="#374151", size=12),
+                ),
+                plot_bgcolor="#FFFFFF",
+                paper_bgcolor="#FFFFFF",
             )
         else:
             fig = dashboard_overview(view_df, dash_metric)
