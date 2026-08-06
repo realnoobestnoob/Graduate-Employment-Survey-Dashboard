@@ -499,7 +499,7 @@ with tab_overall:
                     title=METRIC_LABELS[dash_metric],
                     gridcolor="#F3F4F6",
                     tickfont=dict(color="#6B7280", size=12),
-                    titlefont=dict(color="#374151", size=12),
+                    title=dict(font=dict(color="#374151", size=12)),
                 ),
                 plot_bgcolor="#FFFFFF",
                 paper_bgcolor="#FFFFFF",
