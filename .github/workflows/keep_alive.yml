@@ -27,11 +27,11 @@ jobs:
                   await page.goto(
                       "https://gesdashboard.streamlit.app/",
                       timeout=60000,
-                      wait_until="networkidle",
+                      wait_until="domcontentloaded",
                   )
                   try:
                       btn = await page.wait_for_selector(
-                          "text=Yes, get this app back up", timeout=5000
+                          "text=Yes, get this app back up", timeout=10000
                       )
                       await btn.click()
                       await page.wait_for_timeout(30000)
