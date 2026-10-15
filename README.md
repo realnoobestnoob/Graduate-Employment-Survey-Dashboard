@@ -20,7 +20,7 @@ This dashboard pulls together that Graduate Employemnet Data from 2013 to 2025 a
 
 **Compare Degrees**
 
-**PDF Export**
+**Download charts**
 
 
 
